@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import Header from './pages/Header/header'
+  import Header from './components/Header/header'
   const ERR_OK = 0;
   export default {
     data() {
