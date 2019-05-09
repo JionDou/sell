@@ -39,17 +39,8 @@
         response = response.data;
         if (response.errno === ERR_OK) {
           this.seller = response.data;
-          console.log(this.seller);
         }
       });
-      // this.$http.get('apiData/seller').then((response) => {
-      //   response = response.body;
-      //   console.log(response)
-      //   if (response.errno === ERR_OK){
-      //     this.seller = response.data;
-      //     console.log(this.seller);
-      //   }
-      // })
     },
   }
 

@@ -18,13 +18,13 @@
         </div>
         <div v-if="seller.supports" class="support-count" @click="showDetail">
           <span class="count">{{seller.supports.length}}个</span>
-          <i class="icon icon-keyboard_arrow_right">></i>
+          <i class="icon-keyboard_arrow_right"></i>
         </div>
       </div>
     </div>
     <div class="bulletin-wrapper" @click="showDetail">
       <span class="bulletin-title"></span><span class="bulletin-text">{{seller.bulletin}}</span>
-      <i class="icon icon-keyboard_arrow_right"></i>
+      <i class="icon-keyboard_arrow_right"></i>
     </div>
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
@@ -42,7 +42,7 @@
             <div class="line"></div>
           </div>
 <!--          <ul v-if="seller.supports" class="supports">-->
-<!--            <li class="support-item" v-for="item in seller.supports">-->
+<!--            <li class="support-item" v-for=" item in seller.supports">-->
 <!--              <span class="icon" :class="classMap[seller.supports[$index].type]"></span>-->
 <!--              <span class="text">{{seller.supports[$index].description}}</span>-->
 <!--            </li>-->
@@ -96,7 +96,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  /*@import "../../common/stylus/mixin.styl";*/
+  @import "../../common/stylus/mixin.styl";
 .header
   position: relative
   color: #ffffff;
@@ -182,12 +182,12 @@
     background:rgba(7,17,27,0.2)
     .bulletin-title
       display:inline-block
-      vertical-align: top
       width:22px
       height:12px
       bg-image('bulletin')
       background-size:22px 12px
       background-repeat:no-repeat
+      margin-right:5px
     .bulletin-text
       vertical-align:top
       margin:0,4px
