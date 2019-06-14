@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-header :seller="seller"></v-header>
+    <Header :seller="seller"></Header>
     <div id="tab">
       <div class="tab-item">
         <a >
@@ -18,7 +18,7 @@
         </a>
       </div>
     </div>
-    <router-view></router-view>
+    <router-view :seller="seller"></router-view>
   </div>
 </template>
 
@@ -32,7 +32,7 @@
       }
     },
     components: {
-      'v-header': Header
+     Header
     },
     created() {
       this.axios.get('/apiData/seller').then((response) => {
@@ -48,6 +48,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../static/css/reset.css"
+  @import "../static/css/iconfont.css"
   * {
     margin: 0;
     padding: 0;
@@ -62,9 +63,9 @@
       flex 1
       text-align center
       & > a
-        display block
-        font-size 14px
-        color rgb(77,85,93)
+        display: block
+        font-size: 14px
+        color: rgb(77,85,93)
 .router-link-active
-  color orange
+  color: red
 </style>

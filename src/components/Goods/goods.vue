@@ -1,17 +1,17 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper" ref="menu-wrapper" >
-      <ul class="list-style-none title-list">
-        <li v-for="item in goods" class="menu-item">
+    <div class="menu-wrapper" ref="menuWrapper" >
+      <ul>
+        <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index)">
           <span class="text border-1px">
-            <span v-show="item.type > 0" class="icon" :class="classMap[item.type]">{{item.name}}</span>
+            <span class="icon icon-text" :class="classMap[item.type]">{{item.name}}</span>
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" ref="foods-wrapper">
+    <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item">
@@ -27,17 +27,23 @@
                 <div class="price">
                   <span class="now">¥{{food.price}}</span><span class="old" v-show="food.oldPrice">¥{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <Cartcontrol :food="food"></Cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
+    <ShopCart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></ShopCart>
   </div>
 </template>
 
 <script>
   import BScroll from 'better-scroll';
+  import ShopCart from '../../components/ShopCart/shopcart';
+  import Cartcontrol from '../../components/Cartcontrol/cartcontrol';
   const ERR_OK = 0;
   export default {
     props: {
@@ -47,7 +53,32 @@
     },
     data() {
       return {
-        goods: []
+        goods: [],
+        listHeight:[],
+        scrollY: 0
+      };
+    },
+    computed:{
+      currentIndex(){
+        for (let i = 0;i < this.listHeight.length;i++){
+            let height1 = this.listHeight[i];
+            let height2 = this.listHeight[i + 1];
+            if (!height1||(this.scrollY >= height1 && this.scrollY < height2)){
+              return i;
+            }
+        }
+        return 0;
+      },
+      selectFoods(){
+        let foods = [];
+        this.goods.forEach((good) =>{
+          good.foods.forEach((food) =>{
+            if (food.count){
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     },
     created() {
@@ -58,14 +89,56 @@
           this.goods = response.data;
           this.$nextTick(() => {
             this._initScroll();
+            this._calculateHeight();
           });
         }
       });
     },
     methods:{
+      selectMenu(index){
+        // if (!event._constructed){
+        //   return;
+        // }
+        // console.log(index);
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+        let el = foodList[index];
+        this.foodsScroll.scrollToElement(el,300);
+
+      },
+      _drop(target){
+
+      },
       _initScroll(){
-        this.menuScroll = new  BScroll(this.$refs.menuWrapper,{});
-        this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{});
+        this.menuScroll = new BScroll(this.$refs.menuWrapper,{
+          click: true
+        });
+        this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
+          click: true,
+          probeType:3 //检测实时滚动的位置
+        });
+        this.foodsScroll.on('scroll',(pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
+      },
+      _calculateHeight(){
+          let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+          let height = 0;
+          this.listHeight.push(height);
+          for (let i = 0;i < foodList.length;i++){
+            let item = foodList[i];
+            height += item.clientHeight;
+            this.listHeight.push(height);
+          }
+      }
+    },
+    components:{
+      ShopCart,
+      Cartcontrol,
+    },
+    events:{
+      'cart.add'(target){
+        this._drop(target);
+
       }
     }
   }
@@ -86,16 +159,24 @@
       background: #f3f5f7
       .menu-item
         display: table
-        height: 54px
+        height: 72px
         width: 56px
         padding: 0 12px
         line-height: 14px
+        &.current
+          position:relative
+          z-index:10
+          margin-top: -1px
+          background: #ffffff
+          font-weight:700
+          .text
+            border-none()
         .icon
           display: inline-block
           vertical-align top
-          width: 12px
+          /*width: 12px*/
           height: 12px
-          margin-right: 2px
+          margin-right: 4px
           background-size: 12px 12px
           background-repeat: no-repeat
           &.decrease
@@ -108,24 +189,26 @@
             bg-image('invoice_3')
           &.special
             bg-image('special_3')
+
+        .icon-text
+          font-size:12px
+          padding-left:14px
         .text
           display: table-cell
           width: 56px
           vertical-align: middle
           border-1px: rgba(7, 17, 27, 0.1)
           font-size: 12px
-
     .foods-wrapper
       flex: 1
-      /*.title
+      .title
         padding-left: 14px
         height: 26px
         line-height: 26px
         border-left: 2px solid #d9dde1
         font-size: 12px
-        color: rgba(147, 153, 159)
-        background: #f3f5f7*/
-
+        color: rgb(147, 153, 159)
+        background: #f3f5f7
       .food-item
         display: flex
         margin: 18px
