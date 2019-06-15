@@ -36,7 +36,7 @@
         </li>
       </ul>
     </div>
-    <ShopCart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></ShopCart>
+    <ShopCart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></ShopCart>
   </div>
 </template>
 
@@ -106,7 +106,9 @@
 
       },
       _drop(target){
-
+          this.$nextTick(() => {
+            this.$refs.shopcart.drop(target);
+          });
       },
       _initScroll(){
         this.menuScroll = new BScroll(this.$refs.menuWrapper,{
